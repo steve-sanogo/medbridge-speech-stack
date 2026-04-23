@@ -1,0 +1,70 @@
+###############################################################################
+# Omnilingual CTC 300M — Fine-tuning on Ewe (low-resource)
+#
+# Usage:
+#   python -m workflows.recipes.wav2vec2.asr $OUTPUT_DIR \
+#     --config-file configs/omnilingual_ctc_finetune.yaml
+###############################################################################
+
+model:
+  name: "omniASR_CTC_300M"
+
+dataset:
+  name: "med_custom_dataset"
+  train_split: "train"
+  valid_split: "dev"
+  storage_mode: "MIXTURE_PARQUET"
+  task_mode: "ASR"
+
+  mixture_parquet_storage_config:
+    dataset_summary_path: "/home/data/projets-aps/projet6/data/data_ewe/speech_ug/parquet_omni_v6_clean/version=0/language_distribution_0.tsv"
+    beta_corpus: 0.5
+    beta_language: 0.5
+    fragment_loading:
+      cache: true
+      cache_dir: /home/data/projets-aps/projet6/cache
+
+  asr_task_config:
+    # 32000 samples = 2s at 16kHz ; 960000 = 60s
+    min_audio_len: 32000
+    max_audio_len: 960000
+    # Conservative for P100 16GB. Increase if no OOM after 200 steps.
+    max_num_elements: 1920000
+    normalize_audio: true
+    # Shuffle windows — large enough to break ordering bias
+    batch_shuffle_window: 1000
+    example_shuffle_window: 10000
+
+tokenizer:
+  name: "omniASR_tokenizer_v1"
+
+optimizer:
+  config:
+    lr: 1.0e-05
+
+trainer:
+  # Freeze encoder for 1000 steps (warm up CTC head first, then fine-tune everything)
+  # DEFAULT is 10000 — with only 5000 steps, the encoder was NEVER unfrozen in v1!
+  freeze_encoder_for_n_steps: 1000
+  mixed_precision:
+    dtype: "torch.bfloat16"
+  grad_accumulation:
+    # Effective batch = physical × 4 → smoother gradients on 1 GPU
+    num_batches: 2
+  # Clip gradients to stabilize training (v1 had gradient norm ~135)
+  max_grad_norm: 10.0
+  activation_checkpointing:
+    mode: "layerwise"
+
+common:
+  assets:
+    extra_paths:
+      - /home/data/projets-aps/projet6/MedBridge-AI2/custom_cards
+
+regime:
+  # 20000 steps: encoder unfreezes at step 1000, then 19000 steps of full fine-tuning
+  num_steps: 20000
+  validate_after_n_steps: 500
+  validate_every_n_steps: 1000
+  checkpoint_every_n_steps: 1000
+  publish_metrics_every_n_steps: 200

@@ -1,0 +1,7 @@
+name: med_custom_dataset
+dataset_family: mixture_parquet_asr_dataset
+
+dataset_config:
+  data: /home/data/projets-aps/projet6/data/data_ewe/speech_ug/parquet_omni_clean
+
+tokenizer_ref: omniASR_tokenizer_v1
