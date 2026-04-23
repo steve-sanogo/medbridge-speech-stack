@@ -1,4 +1,6 @@
-﻿# Python
+﻿# =========================
+# Python
+# =========================
 __pycache__/
 *.pyc
 *.pyo
@@ -7,33 +9,67 @@ __pycache__/
 venv/
 env/
 
-# IDE
+# =========================
+# IDE / Editors
+# =========================
 .idea/
 .vscode/
 
+# =========================
 # OS
+# =========================
 .DS_Store
 Thumbs.db
 
+# =========================
 # Logs
+# =========================
 logs/
 *.log
 
-# Data
+# =========================
+# Data (raw + processed)
+# =========================
 data/
 datasets/
 *.parquet
+
+# ⚠️ attention: garder si tu veux versionner certains CSV
+# sinon laisse actif
 *.csv
 
-# Models and checkpoints
+# =========================
+# Models / checkpoints
+# =========================
 deploy_models/
 checkpoints/
 outputs/
+
 *.pt
 *.bin
 *.ckpt
 
-# Temporary
-tmp/
+# =========================
+# Audio (très important en ASR)
+# =========================
+*.wav
+*.flac
+*.mp3
+
+# =========================
+# Cache / temp
+# =========================
 cache/
+tmp/
 *.tmp
+
+# =========================
+# Notebooks (optionnel)
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Environment files (optionnel)
+# =========================
+.env
+.env.*
