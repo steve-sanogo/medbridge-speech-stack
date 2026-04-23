@@ -1,136 +1,115 @@
-﻿# Ewe ASR — OmniASR (CTC)
+﻿# Ewe ASR : OmniASR (CTC)
 
-## Overview
+## 1. Overview
 
-This module implements an Automatic Speech Recognition (ASR) system for the **Ewe language**, a low-resource language spoken in West Africa.
-
-The model is based on **OmniASR (wav2vec2 + CTC)** and has been fine-tuned on a custom Ewe speech dataset.
+This module implements an Automatic Speech Recognition (ASR) system specifically designed for **Ewe**, a low-resource language spoken in West Africa. The system leverages the **OmniASR** architecture (wav2vec2 + CTC), fine-tuned on a specialized Ewe speech corpus to address the challenges of clinical and general-purpose transcription.
 
 ---
 
-## Objective
+## 2. Objectives
 
-- Build a robust ASR system for a **low-resource language**
-- Evaluate real performance beyond raw metrics
-- Identify limitations of standard ASR evaluation (WER)
-
----
-
-## Model
-
-- **Base model**: `omniASR_CTC_300M`
-- **Architecture**: wav2vec2 + CTC
-- **Framework**: fairseq2
-- **Tokenizer**: character-level
+The primary goals of this module are:
+* **Robustness**: Developing a high-performance ASR system for a low-resource linguistic environment.
+* **Performance Analysis**: Evaluating real-world model utility beyond standard automated metrics.
+* **Methodological Refinement**: Identifying the specific limitations of Word Error Rate (WER) in the context of non-standardized orthographies.
 
 ---
 
-## Dataset
+## 3. Technical Specifications
 
-- Language: **Ewe (ewe_Latn)**
-- Size: ~162 hours (V6)
-- Clean version: ~37k samples (V6_clean)
+### Model Architecture
+* **Base Model**: `omniASR_CTC_300M`
+* **Architecture**: wav2vec2 + CTC (Connectionist Temporal Classification)
+* **Framework**: fairseq2
+* **Tokenizer**: Character-level tokenization
 
-### Preprocessing
+### Dataset Characteristics
+* **Language**: Ewe (ewe_Latn)
+* **Total Volume**: ~162 hours (V6)
+* **Refined Subset**: ~37k samples (V6_clean)
 
-- resampling → 16 kHz
-- mono conversion
-- clipping detection
-- RMS filtering
-- FLAC compression
-- dataset decontamination (train/val/test)
-
----
-
-## Training Strategy
-
-- encoder freezing (first 1000 steps)
-- full fine-tuning
-- mixed precision (bfloat16)
-- gradient accumulation
+### Preprocessing Pipeline
+To ensure signal quality and consistency, the following steps are applied:
+1. **Normalization**: Resampling to 16 kHz and mono-channel conversion.
+2. **Quality Control**: Clipping detection and RMS-based silence/noise filtering.
+3. **Encoding**: FLAC compression for optimized storage.
+4. **Data Integrity**: Rigorous decontamination between training, validation, and testing sets.
 
 ---
 
-## Results
+## 4. Training Strategy
 
-### Raw evaluation
+The fine-tuning process follows a structured approach:
+* **Encoder Warm-up**: The encoder remains frozen for the first 1000 steps to stabilize the CTC head.
+* **Optimization**: Full fine-tuning using mixed precision (bfloat16) to optimize memory and compute.
+* **Stability**: Implementation of gradient accumulation to simulate larger batch sizes.
+
+---
+
+## 5. Experimental Results
+
+### 5.1 Raw Evaluation
+Standard metrics computed without post-processing:
 
 | Metric | Score |
-|------|------|
-| WER | 63.20% |
-| CER | 19.96% |
+| :--- | :--- |
+| **WER** | 63.20% |
+| **CER** | 19.96% |
 
-### After normalization
+### 5.2 Normalized Evaluation
+Metrics computed after orthographic normalization:
 
 | Metric | Score |
-|------|------|
-| WER | **33.35%** |
-| CER | **9.55%** |
+| :--- | :--- |
+| **WER** | **33.35%** |
+| **CER** | **9.55%** |
 
 ---
 
-## Key Insight
+## 6. Key Insights & Interpretation
 
-> Raw WER significantly overestimates model error in low-resource settings.
+> **Critical Observation**: Raw WER significantly overestimates model error in low-resource settings.
 
-Most errors are due to:
-- Unicode variations (ɛ → e, ɔ → o)
-- orthographic inconsistencies
-- punctuation mismatches
+Our analysis reveals that the majority of transcription errors are **orthographic** rather than **phonetic**. Discrepancies often stem from:
+* **Unicode variations**: Confusion between standard and extended Latin characters (e.g., ɛ vs e, ɔ vs o).
+* **Inconsistencies**: Lack of standardized orthography in the training data.
+* **Formatting**: Punctuation and casing mismatches that inflate WER.
 
----
-
-## Interpretation
-
-- The model correctly captures **acoustic information**
-- Errors are mainly **orthographic**, not phonetic
-- CER confirms good character-level performance
+The low **Character Error Rate (CER)** confirms that the model successfully captures the underlying acoustic information and phonetic structure of the Ewe language.
 
 ---
 
-## Inference
+## 7. Inference
 
-Example:
+To run inference using the fine-tuned model:
 
 ```bash
 python scripts/inference.py \
     --model-path deploy_models/med_asr_ewe_v6_clean \
     --audio sample.wav
-````
+```
 
 ---
 
-## Limitations
+## 8. Limitations & Future Work
 
-* limited training data (~160h)
-* lack of standardized orthography
-* sensitivity of WER to formatting
+### Current Limitations
+* **Data Scarcity**: Performance is constrained by the ~160h training volume.
+* **Orthography**: Sensitivity to non-standardized writing systems.
 
----
-
-## Future Work
-
-* orthographic normalization module
-* data augmentation (SpecAugment)
-* comparison with Whisper (seq2seq)
-* extension to other African languages
+### Roadmap
+* **Normalization**: Development of an automated orthographic normalization post-processor.
+* **Augmentation**: Implementation of SpecAugment to improve generalization.
+* **Benchmarking**: Comparative study with Seq2Seq architectures (e.g., OpenAI Whisper).
+* **Expansion**: Extending the methodology to other West African languages.
 
 ---
 
-## Contribution
+## 9. Conclusion
 
-This work shows that:
+This module demonstrates that **evaluation methodology is critical** in low-resource ASR. Relying solely on raw WER can lead to misleading conclusions; a nuanced approach focusing on phonetic accuracy (CER) and normalization provides a more accurate representation of model capabilities.
 
-> Evaluation methodology is critical in low-resource ASR.
-
-Raw WER alone can lead to incorrect conclusions about model performance.
-
----
-
-## Status
-
-* training: completed
-* evaluation: completed
-* inference: functional
-
-````
+**Status**: 
+- [x] Training Completed
+- [x] Evaluation Completed
+- [x] Inference Functional
