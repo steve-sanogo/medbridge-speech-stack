@@ -1,0 +1,39 @@
+﻿# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Data
+data/
+datasets/
+*.parquet
+*.csv
+
+# Models and checkpoints
+deploy_models/
+checkpoints/
+outputs/
+*.pt
+*.bin
+*.ckpt
+
+# Temporary
+tmp/
+cache/
+*.tmp
