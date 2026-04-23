@@ -1,323 +1,115 @@
-﻿Voici un **README global premium**, en Markdown, pour ton repo principal `medbridge-speech-stack`.
+﻿# MedBridge Speech Stack
 
-````markdown
-# MedBridge Speech Stack
+**Modular repository for low-resource clinical speech technologies.**
 
-Modular repository for low-resource clinical speech technologies.
+## 1. Overview
 
-## Overview
+MedBridge Speech Stack est un dépôt modulaire dédié à la recherche et à l'ingénierie pour la réduction des barrières linguistiques dans les contextes de consultations médicales. 
 
-MedBridge Speech Stack is a modular research and engineering repository dedicated to reducing language barriers in medical consultations.
+Le projet est structuré par tâche et par langue afin de fournir des composants réutilisables pour :
+* **ASR** (Automatic Speech Recognition) : Reconnaissance automatique de la parole.
+* **MT** (Machine Translation) : Traduction automatique.
+* **TTS** (Text-to-Speech) : Synthèse vocale.
+* **LID** (Language Identification) : Identification automatique de la langue.
 
-The project is organized by **task** and **language**, with the objective of building reusable components for:
-
-- automatic speech recognition (**ASR**)
-- machine translation (**MT**)
-- text-to-speech (**TTS**)
-- language identification (**LID**)
-
-The current repository is designed to host the final, structured version of the MedBridge project.
+Ce dépôt centralise la version finale et structurée des travaux du projet MedBridge.
 
 ---
 
-## Repository Scope
+## 2. High-Level Architecture
 
-This repository is not limited to a single model.  
-It is intended to host multiple language-task modules.
-
-### Current scope
-
-#### ASR
-- **Ewe**
-  - `omni/` — OmniASR-based pipeline
-  - `whisper/` — Whisper-based pipeline
-- **Egyptian Arabic**
-  - `omni/` — OmniASR-based pipeline
-
-#### MT
-- `ewe_fr/` — Ewe ↔ French translation
-- `ar_fr/` — Arabic ↔ French translation
-
-#### TTS
-- **Arabic**
-  - text-to-speech module
-
-#### LID
-- language identification component for routing audio/text to the correct downstream module
-
----
-
-## High-Level Architecture
+Le système suit un flux de traitement séquentiel permettant de convertir une entrée vocale en une sortie compréhensible pour le clinicien ou le patient.
 
 ```text
-Audio input
+Audio Input
    ↓
-[LID]
+[LID: Language Identification]
    ↓
 [ASR: Ewe / Arabic]
    ↓
-[MT: Ewe↔FR / Arabic↔FR]
+[MT: Ewe ↔ French / Arabic ↔ French]
    ↓
-Text output for clinician
+Text Output (Clinician)
    ↓
-[TTS: Arabic, optional]
+[TTS: Arabic - Optional]
    ↓
-Speech output
-````
+Speech Output (Patient)
+```
 
 ---
 
-## Repository Structure
+## 3. Repository Structure
+
+L'organisation du dépôt repose sur une séparation stricte des domaines techniques et linguistiques.
 
 ```text
 medbridge-speech-stack/
-├── asr/
-│   ├── ewe/
-│   │   ├── omni/
-│   │   ├── whisper/
-│   │   └── README.md
-│   ├── arabic/
-│   │   ├── omni/
-│   │   └── README.md
+├── asr/                    # Reconnaissance vocale
+│   ├── ewe/                # Pipelines pour l'Ewe (Omni, Whisper)
+│   ├── arabic/             # Pipelines pour l'Arabe Égyptien
 │   └── README.md
-│
-├── mt/
-│   ├── ewe_fr/
-│   ├── ar_fr/
+├── mt/                     # Traduction automatique
+│   ├── ewe_fr/             # Ewe ↔ Français
+│   ├── ar_fr/              # Arabe ↔ Français
 │   └── README.md
-│
-├── tts/
-│   ├── arabic/
-│   │   └── model/
+├── tts/                    # Synthèse vocale
+│   ├── arabic/             # Génération vocale Arabe
 │   └── README.md
-│
-├── lid/
-│   └── README.md
-│
-├── docs/
-│   └── README.md
-│
-├── shared/
-│   ├── configs/
-│   ├── scripts/
-│   ├── assets/
-│   └── README.md
-│
-├── .gitignore
-└── README.md
+├── lid/                    # Identification de la langue
+├── shared/                 # Configurations, scripts et assets communs
+├── docs/                   # Documentation technique détaillée
+└── README.md               # Point d'entrée principal
 ```
 
 ---
 
-## Module Details
+## 4. Module Details
 
-## 1. ASR
+### 4.1 ASR (Automatic Speech Recognition)
+* **Ewe** : Deux approches complémentaires sont maintenues dans `asr/ewe/` :
+    * `omni/` : Pipeline basé sur OmniASR.
+    * `whisper/` : Scripts de fine-tuning et évaluation basés sur Whisper.
+* **Egyptian Arabic** : Le module `asr/arabic/omni/` est traité indépendamment pour répondre aux spécificités linguistiques, aux jeux de données distincts et aux contraintes de prétraitement propres à ce dialecte.
 
-### Ewe ASR
+### 4.2 MT (Machine Translation)
+Les modules de traduction (`mt/ewe_fr/` et `mt/ar_fr/`) sont bidirectionnels. Chaque sous-répertoire contient la logique d'entraînement, le tokenizer et les scripts d'évaluation spécifiques.
 
-Two ASR approaches are maintained for Ewe:
+### 4.3 TTS (Text-to-Speech)
+Le module `tts/arabic/` est conçu pour la génération de parole dans le cadre du pipeline de consultation, permettant notamment de restituer oralement au patient le contenu traduit.
 
-#### `asr/ewe/omni/`
-
-OmniASR-based pipeline for Ewe speech recognition.
-
-Typical contents:
-
-* training and evaluation scripts
-* configuration files
-* exported inference-ready model
-* experiment notes and results
-
-#### `asr/ewe/whisper/`
-
-Whisper-based pipeline for Ewe speech recognition.
-
-Typical contents:
-
-* Whisper fine-tuning scripts
-* decoding and evaluation scripts
-* comparative experiments against OmniASR
-
-### Egyptian Arabic ASR
-
-#### `asr/arabic/omni/`
-
-OmniASR-based pipeline for Egyptian Arabic speech recognition.
-
-This module is intentionally kept separate from Ewe because:
-
-* the linguistic setting is different,
-* the datasets differ,
-* the preprocessing and evaluation constraints may diverge.
+### 4.4 LID (Language Identification)
+Composant critique pour le routage multilingue, il détecte la langue source afin d'orienter les données vers les branches ASR et MT appropriées.
 
 ---
 
-## 2. MT
+## 5. Design Principles
 
-### `mt/ewe_fr/`
-
-Machine translation module for:
-
-* Ewe → French
-* French → Ewe
-
-### `mt/ar_fr/`
-
-Machine translation module for:
-
-* Arabic → French
-* French → Arabic
-
-Each MT module is expected to contain:
-
-* training code
-* evaluation code
-* tokenizer / preprocessing logic
-* notes on datasets and model choices
+* **Modularité** : Chaque couple tâche-langue est isolé pour faciliter la maintenance.
+* **Reproductibilité** : Les fichiers de configuration (`configs/`) et les environnements (`environment.yml`) sont inclus dans chaque module.
+* **Scalabilité** : L'architecture permet l'ajout de nouvelles langues sans modification structurelle majeure.
+* **Gestion des fichiers volumineux** : Conformément à la politique du projet, les fichiers lourds (checkpoints de modèles `.pt`, datasets bruts) ne sont pas versionnés sur GitHub. Les liens vers les assets externes sont fournis dans les README de chaque module.
 
 ---
 
-## 3. TTS
+## 6. Current Status
 
-### `tts/arabic/`
-
-Arabic text-to-speech module.
-
-This component is intended for speech generation in the consultation pipeline, for example:
-
-* spoken output to the patient,
-* synthetic rendering of translated content,
-* future voice-enabled interaction scenarios.
+Le dépôt est en phase de structuration finale.
+* **Composants intégrés** : Ewe ASR (OmniASR & Whisper).
+* **Composants en cours d'intégration** : Egyptian Arabic ASR, MT (Ewe/FR & Arabe/FR), Arabic TTS et LID.
 
 ---
 
-## 4. LID
+## 7. Authors & Contributors
 
-### `lid/`
+L'équipe du projet MedBridge est composée de :
 
-Language identification module.
-
-Purpose:
-
-* detect the source language,
-* dispatch audio or text to the correct ASR / MT / TTS branch,
-* support multilingual routing in the full MedBridge pipeline.
+* **Keli Kekeli**
+* **Ahmad Aldenawi**
+* **Patrice Sebastiano**
+* **Steve Sanogo**
 
 ---
 
-## Design Principles
+## 8. License
 
-This repository follows a few core principles:
-
-### Modularization
-
-Each task-language pair is isolated in its own subdirectory.
-
-### Reproducibility
-
-Code, configs, and documentation should be sufficient to understand and reproduce each module independently.
-
-### Separation of concerns
-
-* model code stays inside the relevant module
-* shared utilities go to `shared/`
-* documentation goes to `docs/`
-
-### Scalability
-
-The structure is designed so new languages and tasks can be added without refactoring the whole repository.
-
----
-
-## Large Files Policy
-
-Large artifacts are **not meant to be pushed directly to GitHub**.
-
-This includes:
-
-* checkpoints
-* `.pt` model weights
-* raw datasets
-* `.parquet` files
-* heavy outputs
-
-Recommended practice:
-
-* keep code and configs in Git
-* store heavy artifacts externally
-* reference downloadable assets in module-level README files
-
----
-
-## Suggested Per-Module Contents
-
-Each concrete module such as `asr/ewe/omni/` should ideally contain:
-
-```text
-module/
-├── configs/
-├── scripts/
-├── deploy_models/         # optional, not necessarily versioned
-├── outputs/               # optional, usually ignored by git
-├── README.md
-└── environment.yml        # optional, if module-specific
-```
-
----
-
-## Current Status
-
-This repository is intended to host the **final organized version** of the MedBridge project.
-
-The first fully structured component to integrate is:
-
-* **Ewe ASR**
-
-  * OmniASR
-  * Whisper
-
-Other components are expected to be added progressively:
-
-* Egyptian Arabic ASR
-* Ewe/French MT
-* Arabic/French MT
-* Arabic TTS
-* LID
-
----
-
-## Recommended Workflow
-
-### For development
-
-* work inside the appropriate module
-* keep reusable helpers in `shared/`
-* document important choices in module-level README files
-
-### For experiments
-
-* store lightweight experiment metadata in Git
-* keep heavy outputs outside GitHub
-* retain only final or essential artifacts in versioned form
-
-### For release
-
-* publish clean code
-* keep deployment artifacts external if too large
-* maintain a clear README in each submodule
-
----
-
-## Authors
-
-MedBridge project team.
-
-* Keli Ke keli
-* Ahmad Aldenawi
-* Patrice Sebastiano
-* Steve Sanogo
----
-
-## License
-
-Academic and research use unless stated otherwise
+Usage académique et recherche uniquement, sauf mention contraire.
