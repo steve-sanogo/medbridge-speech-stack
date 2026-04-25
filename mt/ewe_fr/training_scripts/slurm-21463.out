@@ -1,0 +1,23 @@
+slurmstepd: error: TMPDIR [/home/data/projets-aps/projet6/pip_tmp] is not writeable
+slurmstepd: error: Setting TMPDIR to /tmp
+mkdir: cannot create directory ‘/home/data/projets-aps/projet6/experiments2’: File exists
+mkdir: cannot create directory ‘/home/data/projets-aps/projet6/experiments2’: File exists
+mkdir: cannot create directory ‘/home/data/projets-aps/projet6/experiments2’: File exists
+Not a conda environment: /home/data/projets-aps/projet6/env_nllb
+🚀 NLLB Environment Activated (Private)
+/var/spool/slurmd/job21463/slurm_script: line 31: cd: /home/data/projets-aps/projet6/MedBridge-AI/scripts/Patrice/training_scripts/ewe_training: No such file or directory
+Traceback (most recent call last):
+  File "/home/nas-wks01/users/uapv2601941/miniconda3/lib/python3.9/pathlib.py", line 1323, in mkdir
+    self._accessor.mkdir(self, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/data/projets-aps/projet6/experiments2/translation_ewe_french_4'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/data/projets-aps/projet6/MedBridge-AI/scripts/Patrice/training_scripts/ewe_french/train_and_benchmark_NLLB_ewe_french_super_corpora_ratio_1_to_4.py", line 163, in <module>
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+  File "/home/nas-wks01/users/uapv2601941/miniconda3/lib/python3.9/pathlib.py", line 1327, in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+  File "/home/nas-wks01/users/uapv2601941/miniconda3/lib/python3.9/pathlib.py", line 1323, in mkdir
+    self._accessor.mkdir(self, mode)
+FileExistsError: [Errno 17] File exists: '/home/data/projets-aps/projet6/experiments2'
