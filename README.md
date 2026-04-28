@@ -97,6 +97,65 @@ Le dépôt est en phase de structuration finale.
 * **Composants intégrés** : Ewe ASR (OmniASR & Whisper).
 * **Composants en cours d'intégration** : Egyptian Arabic ASR, MT (Ewe/FR & Arabe/FR), Arabic TTS et LID.
 
+## Hugging Face Organization
+
+We use the Hugging Face platform to host all our models and datasets for reproducibility and collaboration.
+
+🔗 Organization:
+https://huggingface.co/medbridge-ai
+
+---
+
+### Models
+
+- **OmniASR (Ewe)**  
+  https://huggingface.co/medbridge-ai/omni-ewe-asr  
+
+- **Whisper ASR (Ewe)**  
+  https://huggingface.co/medbridge-ai/whisper-ewe-asr  
+
+- **NLLB Translation (Ewe → French)**  
+  https://huggingface.co/medbridge-ai/nllb-ewe-fr  
+
+- **NLLB Translation (Ewe → Arabic)**  
+  https://huggingface.co/medbridge-ai/nllb-ewe-ar  
+
+- **OmniASR (Arabic)**  
+  https://huggingface.co/medbridge-ai/omni-ar-asr  
+
+---
+
+### Datasets
+
+- **Ewe ASR (Omni format)**  
+  https://huggingface.co/datasets/medbridge-ai/asr-ewe-omni  
+
+- **Ewe ASR (Whisper format)**  
+  https://huggingface.co/datasets/medbridge-ai/asr-ewe-whisper  
+
+- **Arabic ASR (Omni format)**  
+  https://huggingface.co/datasets/medbridge-ai/asr-ar-omni  
+
+- **Ewe → French Translation**  
+  https://huggingface.co/datasets/medbridge-ai/translation-ewe-fr  
+
+- **Ewe → Arabic Translation**  
+  https://huggingface.co/datasets/medbridge-ai/translation-ewe-ar  
+
+---
+
+### Usage
+
+All models and datasets can be loaded directly using Hugging Face:
+
+```python
+from huggingface_hub import snapshot_download
+
+model_dir = snapshot_download(
+    repo_id="medbridge-ai/omni-ewe-asr",
+    repo_type="model"
+)
+```
 ---
 
 ## 7. Authors & Contributors
