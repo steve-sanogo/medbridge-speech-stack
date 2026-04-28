@@ -97,7 +97,7 @@ Le dépôt est en phase de structuration finale.
 * **Composants intégrés** : Ewe ASR (OmniASR & Whisper).
 * **Composants en cours d'intégration** : Egyptian Arabic ASR, MT (Ewe/FR & Arabe/FR), Arabic TTS et LID.
 
-## Hugging Face Organization
+## 7. Hugging Face Organization
 
 We use the Hugging Face platform to host all our models and datasets for reproducibility and collaboration.
 
@@ -158,7 +158,7 @@ model_dir = snapshot_download(
 ```
 ---
 
-## 7. Authors & Contributors
+## 8. Authors & Contributors
 
 L'équipe du projet MedBridge est composée de :
 
@@ -169,6 +169,6 @@ L'équipe du projet MedBridge est composée de :
 
 ---
 
-## 8. License
+## 9. License
 
 Usage académique et recherche uniquement, sauf mention contraire.
