@@ -1,38 +1,38 @@
-﻿# MedBridge Speech Stack
+# MedBridge Speech Stack
 
 **Modular repository for low-resource clinical speech technologies.**
 
 ## 1. Overview
 
-MedBridge Speech Stack est un dépôt modulaire dédié à la recherche et à l'ingénierie pour la réduction des barrières linguistiques dans les contextes de consultations médicales. 
+MedBridge Speech Stack is a modular repository dedicated to research and engineering aimed at reducing language barriers in medical consultation contexts.
 
-Le projet est structuré par tâche et par langue afin de fournir des composants réutilisables pour :
-* **ASR** (Automatic Speech Recognition) : Reconnaissance automatique de la parole.
-* **MT** (Machine Translation) : Traduction automatique.
-* **TTS** (Text-to-Speech) : Synthèse vocale.
-* **LID** (Language Identification) : Identification automatique de la langue.
+The project is structured by task and by language to provide reusable components for:
+* **ASR** (Automatic Speech Recognition): Automatic speech recognition.
+* **MT** (Machine Translation): Machine translation.
+* **TTS** (Text-to-Speech): Speech synthesis.
+* **LID** (Language Identification): Automatic language identification.
 
-Ce dépôt centralise la version finale et structurée des travaux du projet MedBridge.
+This repository centralizes the final and structured version of the MedBridge project's work.
 
 ---
 
 ## 2. High-Level Architecture
 
-Le système suit un flux de traitement séquentiel permettant de convertir une entrée vocale en une sortie compréhensible pour le clinicien ou le patient.
+The system follows a sequential processing flow, enabling the conversion of voice input into an output understandable for the clinician or the patient.
 
 ```text
 Audio Input
-   ↓
+    ↓
 [LID: Language Identification]
-   ↓
+    ↓
 [ASR: Ewe / Arabic]
-   ↓
+    ↓
 [MT: Ewe ↔ French / Arabic ↔ French]
-   ↓
+    ↓
 Text Output (Clinician)
-   ↓
+    ↓
 [TTS: Arabic - Optional]
-   ↓
+    ↓
 Speech Output (Patient)
 ```
 
@@ -40,25 +40,25 @@ Speech Output (Patient)
 
 ## 3. Repository Structure
 
-L'organisation du dépôt repose sur une séparation stricte des domaines techniques et linguistiques.
+The repository organization is based on a strict separation of technical and linguistic domains.
 
 ```text
 medbridge-speech-stack/
-├── asr/                    # Reconnaissance vocale
-│   ├── ewe/                # Pipelines pour l'Ewe (Omni, Whisper)
-│   ├── arabic/             # Pipelines pour l'Arabe Égyptien
+├── asr/                    # Speech Recognition
+│   ├── ewe/                # Pipelines for Ewe (Omni, Whisper)
+│   ├── arabic/             # Pipelines for Egyptian Arabic
 │   └── README.md
-├── mt/                     # Traduction automatique
-│   ├── ewe_fr/             # Ewe ↔ Français
-│   ├── ar_fr/              # Arabe ↔ Français
+├── mt/                     # Machine Translation
+│   ├── ewe_fr/             # Ewe ↔ French
+│   ├── ar_fr/              # Arabic ↔ French
 │   └── README.md
-├── tts/                    # Synthèse vocale
-│   ├── arabic/             # Génération vocale Arabe
+├── tts/                    # Speech Synthesis
+│   ├── arabic/             # Arabic Speech Generation
 │   └── README.md
-├── lid/                    # Identification de la langue
-├── shared/                 # Configurations, scripts et assets communs
-├── docs/                   # Documentation technique détaillée
-└── README.md               # Point d'entrée principal
+├── lid/                    # Language Identification
+├── shared/                 # Common configurations, scripts, and assets
+├── docs/                   # Detailed technical documentation
+└── README.md               # Main entry point
 ```
 
 ---
@@ -66,81 +66,71 @@ medbridge-speech-stack/
 ## 4. Module Details
 
 ### 4.1 ASR (Automatic Speech Recognition)
-* **Ewe** : Deux approches complémentaires sont maintenues dans `asr/ewe/` :
-    * `omni/` : Pipeline basé sur OmniASR.
-    * `whisper/` : Scripts de fine-tuning et évaluation basés sur Whisper.
-* **Egyptian Arabic** : Le module `asr/arabic/omni/` est traité indépendamment pour répondre aux spécificités linguistiques, aux jeux de données distincts et aux contraintes de prétraitement propres à ce dialecte.
+* **Ewe**: Two complementary approaches are maintained in `asr/ewe/`:
+    * `omni/`: Pipeline based on OmniASR.
+    * `whisper/`: Fine-tuning and evaluation scripts based on Whisper.
+* **Egyptian Arabic**: The `asr/arabic/omni/` module is handled independently to address specific linguistic features, distinct datasets, and preprocessing constraints unique to this dialect.
 
 ### 4.2 MT (Machine Translation)
-Les modules de traduction (`mt/ewe_fr/` et `mt/ar_fr/`) sont bidirectionnels. Chaque sous-répertoire contient la logique d'entraînement, le tokenizer et les scripts d'évaluation spécifiques.
+The translation modules (`mt/ewe_fr/` and `mt/ar_fr/`) are bidirectional. Each subdirectory contains the training logic, tokenizer, and specific evaluation scripts.
 
 ### 4.3 TTS (Text-to-Speech)
-Le module `tts/arabic/` est conçu pour la génération de parole dans le cadre du pipeline de consultation, permettant notamment de restituer oralement au patient le contenu traduit.
+The `tts/arabic/` module is designed for speech generation within the consultation pipeline, specifically allowing translated content to be read back to the patient.
 
 ### 4.4 LID (Language Identification)
-Composant critique pour le routage multilingue, il détecte la langue source afin d'orienter les données vers les branches ASR et MT appropriées.
+A critical component for multilingual routing, it detects the source language to direct data to the appropriate ASR and MT branches.
 
 ---
 
 ## 5. Design Principles
 
-* **Modularité** : Chaque couple tâche-langue est isolé pour faciliter la maintenance.
-* **Reproductibilité** : Les fichiers de configuration (`configs/`) et les environnements (`environment.yml`) sont inclus dans chaque module.
-* **Scalabilité** : L'architecture permet l'ajout de nouvelles langues sans modification structurelle majeure.
-* **Gestion des fichiers volumineux** : Conformément à la politique du projet, les fichiers lourds (checkpoints de modèles `.pt`, datasets bruts) ne sont pas versionnés sur GitHub. Les liens vers les assets externes sont fournis dans les README de chaque module.
+* **Modularity**: Each task-language pair is isolated to facilitate maintenance.
+* **Reproducibility**: Configuration files (`configs/`) and environments (`environment.yml`) are included in each module.
+* **Scalability**: The architecture allows for the addition of new languages without major structural modifications.
+* **Large File Management**: In accordance with project policy, heavy files (model checkpoints `.pt`, raw datasets) are not versioned on GitHub. Links to external assets are provided in the README of each module.
 
 ---
 
 ## 6. Current Status
 
-Le dépôt est en phase de structuration finale.
-* **Composants intégrés** : Ewe ASR (OmniASR & Whisper).
-* **Composants en cours d'intégration** : Egyptian Arabic ASR, MT (Ewe/FR & Arabe/FR), Arabic TTS et LID.
+The repository is in the final structuring phase.
+* **Integrated components**: Ewe ASR (OmniASR & Whisper).
+* **Components being integrated**: Egyptian Arabic ASR, MT (Ewe/FR & Arabic/FR), Arabic TTS, and LID.
 
 ## 7. Hugging Face Organization
 
 We use the Hugging Face platform to host all our models and datasets for reproducibility and collaboration.
 
 🔗 Organization:
-https://huggingface.co/medbridge-ai
+[https://huggingface.co/medbridge-ai](https://huggingface.co/medbridge-ai)
 
 ---
 
 ### Models
 
-- **OmniASR (Ewe)**  
-  https://huggingface.co/medbridge-ai/omni-ewe-asr  
+- **OmniASR (Ewe)** [https://huggingface.co/medbridge-ai/omni-ewe-asr](https://huggingface.co/medbridge-ai/omni-ewe-asr)  
 
-- **Whisper ASR (Ewe)**  
-  https://huggingface.co/medbridge-ai/whisper-ewe-asr  
+- **Whisper ASR (Ewe)** [https://huggingface.co/medbridge-ai/whisper-ewe-asr](https://huggingface.co/medbridge-ai/whisper-ewe-asr)  
 
-- **NLLB Translation (Ewe → French)**  
-  https://huggingface.co/medbridge-ai/nllb-ewe-fr  
+- **NLLB Translation (Ewe → French)** [https://huggingface.co/medbridge-ai/nllb-ewe-fr](https://huggingface.co/medbridge-ai/nllb-ewe-fr)  
 
-- **NLLB Translation (Ewe → Arabic)**  
-  https://huggingface.co/medbridge-ai/nllb-ewe-ar  
+- **NLLB Translation (Ewe → Arabic)** [https://huggingface.co/medbridge-ai/nllb-ewe-ar](https://huggingface.co/medbridge-ai/nllb-ewe-ar)  
 
-- **OmniASR (Arabic)**  
-  https://huggingface.co/medbridge-ai/omni-ar-asr  
+- **OmniASR (Arabic)** [https://huggingface.co/medbridge-ai/omni-ar-asr](https://huggingface.co/medbridge-ai/omni-ar-asr)  
 
 ---
 
 ### Datasets
 
-- **Ewe ASR (Omni format)**  
-  https://huggingface.co/datasets/medbridge-ai/asr-ewe-omni  
+- **Ewe ASR (Omni format)** [https://huggingface.co/datasets/medbridge-ai/asr-ewe-omni](https://huggingface.co/datasets/medbridge-ai/asr-ewe-omni)  
 
-- **Ewe ASR (Whisper format)**  
-  https://huggingface.co/datasets/medbridge-ai/asr-ewe-whisper  
+- **Ewe ASR (Whisper format)** [https://huggingface.co/datasets/medbridge-ai/asr-ewe-whisper](https://huggingface.co/datasets/medbridge-ai/asr-ewe-whisper)  
 
-- **Arabic ASR (Omni format)**  
-  https://huggingface.co/datasets/medbridge-ai/asr-ar-omni  
+- **Arabic ASR (Omni format)** [https://huggingface.co/datasets/medbridge-ai/asr-ar-omni](https://huggingface.co/datasets/medbridge-ai/asr-ar-omni)  
 
-- **Ewe → French Translation**  
-  https://huggingface.co/datasets/medbridge-ai/translation-ewe-fr  
+- **Ewe → French Translation** [https://huggingface.co/datasets/medbridge-ai/translation-ewe-fr](https://huggingface.co/datasets/medbridge-ai/translation-ewe-fr)  
 
-- **Ewe → Arabic Translation**  
-  https://huggingface.co/datasets/medbridge-ai/translation-ewe-ar  
+- **Ewe → Arabic Translation** [https://huggingface.co/datasets/medbridge-ai/translation-ewe-ar](https://huggingface.co/datasets/medbridge-ai/translation-ewe-ar)  
 
 ---
 
@@ -156,11 +146,12 @@ model_dir = snapshot_download(
     repo_type="model"
 )
 ```
+
 ---
 
 ## 8. Authors & Contributors
 
-L'équipe du projet MedBridge est composée de :
+The MedBridge project team consists of:
 
 * **Keli Kekeli**
 * **Ahmad Aldenawi**
@@ -170,5 +161,4 @@ L'équipe du projet MedBridge est composée de :
 ---
 
 ## 9. License
-
-Usage académique et recherche uniquement, sauf mention contraire.
+Academic and research use only, unless otherwise specified.
